@@ -4,6 +4,7 @@ import Home from './Home';
 import Profile from './Profile';
 import DrugList from './DrugList';
 import DrugDetail from './DrugDetail';
+import CreateDrugForm from './CreateDrugForm';
 import './App.css';
 import { TextField, Button, Typography, Box, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -68,7 +69,7 @@ const LoginForm: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!username || !password) {
-          //cos tu dac
+            //cos tu dac
             return;
         }
         await login(username, password);
@@ -162,7 +163,7 @@ const LoginForm: React.FC = () => {
                             },
                         }}
                     >
-                        {isLoading ? 'Logging in...' : 'Login'}
+                        {isLoading ? 'logging in...' : 'login'}
                     </Button>
                 </Box>
             </Box>
@@ -181,6 +182,7 @@ function App() {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/drugs" element={<DrugList />} />
                         <Route path="/drugs/:id" element={<DrugDetail />} />
+                        <Route path="/drugs/create" element={<CreateDrugForm />} />
                     </Routes>
                 </>
             </ThemeProvider>

@@ -1,11 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Typography, Box } from '@mui/material';
+import { Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import useAuth from './hooks/useAuth';
+import { jwtDecode } from 'jwt-decode';
+
+interface DecodedToken {
+    role: string;
+    sub: string; //username
+    exp: number; //expiration time
+    iat: number; //issued at
+}
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
     const { logout } = useAuth();
+    const [userRole, setUserRole] = useState<string | null>(null);
+    const [loadingRole, setLoadingRole] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
@@ -13,13 +23,32 @@ const Home: React.FC = () => {
             console.log('no token found, redirecting to login');
             navigate('/');
         } else {
-            console.log('token found:', token);
+            try {
+                const decoded: DecodedToken = jwtDecode(token);
+                setUserRole(decoded.role);
+                console.log('token found, user role:', decoded.role);
+            } catch (e) {
+                console.error('Error decoding token:', e);
+                localStorage.removeItem('jwtToken');
+                navigate('/');
+            } finally {
+                setLoadingRole(false);
+            }
         }
     }, [navigate]);
 
     const handleLogout = () => {
         logout();
     };
+
+    if (loadingRole) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+                <CircularProgress />
+                <Typography sx={{ marginLeft: 2 }}>Loading user data...</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box
@@ -53,7 +82,7 @@ const Home: React.FC = () => {
             <Typography variant="h6" sx={{ marginBottom: 3 }}>
                 explore our delightful selection of medications and health products!
             </Typography>
-            <Box sx={{ marginTop: 3, display: 'flex', gap: 2 }}>
+            <Box sx={{ marginTop: 3, display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Button
                     onClick={() => navigate('/profile')}
                     variant="contained"
@@ -84,6 +113,24 @@ const Home: React.FC = () => {
                 >
                     View Drugs
                 </Button>
+                {userRole === 'ROLE_ADMIN' && (
+                    <Button
+                        onClick={() => navigate('/drugs/create')}
+                        variant="contained"
+                        color="primary"
+                        sx={{
+                            padding: '12px 24px',
+                            fontSize: '1.1rem',
+                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                            '&:hover': {
+                                backgroundColor: '#3a6a9b',
+                                boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.2)',
+                            },
+                        }}
+                    >
+                        Add New Drug
+                    </Button>
+                )}
                 <Button
                     onClick={handleLogout}
                     variant="contained"
