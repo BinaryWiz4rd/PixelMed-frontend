@@ -20,6 +20,7 @@ interface Drug {
     name: string;
     price: number;
     description: string;
+    stock: number;
 }
 
 const StyledListItem = styled(ListItem)(({ theme }) => ({
@@ -63,14 +64,14 @@ const DrugList: React.FC = () => {
                         navigate('/');
                     }
                     const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to fetch drug list.');
+                    throw new Error(errorData.message || 'failed to fetch drug list.');
                 }
 
                 const data: Drug[] = await response.json();
                 setDrugs(data);
             } catch (err: any) {
-                console.error('Drug list fetch error:', err);
-                setError(err.message || 'An unexpected error occurred while fetching drugs.');
+                console.error('drug list fetch error:', err);
+                setError(err.message || 'an unexpected error occurred while fetching drugs.');
             } finally {
                 setLoading(false);
             }
@@ -150,7 +151,7 @@ const DrugList: React.FC = () => {
                                         }
                                         secondary={
                                             <Typography variant="body1" color="text.secondary">
-                                                Price: ${drug.price.toFixed(2)}
+                                                Price: \$${drug.price.toFixed(2)} | Stock: {drug.stock}
                                             </Typography>
                                         }
                                     />
