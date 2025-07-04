@@ -64,7 +64,7 @@ const theme = createTheme({
 const LoginForm: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { login, error, isLoading } = useAuth(); // Use the custom hook
+    const { login, error, isLoading } = useAuth();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
